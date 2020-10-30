@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  presto:
+    image: prestosql/presto:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./presto/etc:/usr/lib/presto/etc"
+    networks:
+      - backend
+  superset:
+    image: amancevice/superset:latest
+    ports:
+      - "8088:8088"
+    volumes:
+      - "./superset/superset_config.py:/etc/superset/superset_config.py"
+    networks:
+      - backend
+  envoy:
+    image: getenvoy/envoy:stable
+    command: --config-path /etc/envoy/envoy.yaml
+    volumes:
+      - "./envoy/etc/envoy.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      - backend
+
+networks:
+  backend:

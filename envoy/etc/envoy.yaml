@@ -1,0 +1,54 @@
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address:
+      protocol: TCP
+      address: 0.0.0.0
+      port_value: 9901
+
+static_resources:
+  listeners:
+  - name: prometheus_upstream
+    address:
+      socket_address:
+        protocol: TCP
+        address: 0.0.0.0
+        port_value: 9090
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          route_config:
+            name: local_route
+            request_headers_to_add:
+            - header:
+                key: "M3-Restrict-By-Tags-JSON"
+                value: '{"match":[{"name":"namespace","type":"EQUAL","value":"meta"}],"strip":[]}'
+              append: false
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: prometheus_upstream
+          http_filters:
+          - name: envoy.filters.http.router
+  clusters:
+  - name: prometheus_upstream
+    connect_timeout: 1s
+    type: strict_dns
+    dns_lookup_family: v4_only
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: prometheus_upstream
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: "host.docker.internal"
+                port_value: 9090

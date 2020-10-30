@@ -1,0 +1,16 @@
+*~
+*.out
+*.test
+*.xml
+*.swp
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.cov
+*.tmp
+.DS_Store
+test.log
+*.log
+*.pyc
