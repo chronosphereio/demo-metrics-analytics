@@ -89,7 +89,7 @@ Here's the default configuration:
 connector.name=prometheus
 prometheus.uri=http://envoy:9090
 prometheus.query.chunk.size.duration=1d
-prometheus.max.query.range.duration=30d
+prometheus.max.query.range.duration=365d
 prometheus.cache.ttl=30s
 ```
 
