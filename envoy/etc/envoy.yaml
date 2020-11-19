@@ -23,10 +23,10 @@ static_resources:
           route_config:
             name: local_route
             request_headers_to_add:
-            - header:
-                key: "M3-Restrict-By-Tags-JSON"
-                value: '{"match":[{"name":"namespace","type":"EQUAL","value":"meta"}],"strip":[]}'
-              append: false
+            # - header:
+            #     key: "M3-Restrict-By-Tags-JSON"
+            #     value: '{"match":[{"name":"k8s_namespace","type":"REGEXP","value":"prod.*"}],"strip":[]}'
+            #   append: false
             virtual_hosts:
             - name: local_service
               domains: ["*"]
